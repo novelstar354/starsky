@@ -3,359 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STar</title>
+<title>STar Background</title>
 
 <style>
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:system-ui;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 body{
-  background: radial-gradient(circle at top, #0a0f1f, #05070f);
-  color:#fff;
-  overflow-x:hidden;
-  scroll-behavior:smooth;
+    background:radial-gradient(circle at top,#0a0f1f,#05070f);
+    overflow:hidden;
 }
 
-/* ========== LOADING ========== */
-#loading{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  z-index:9999;
-  transition:1s;
-}
-
-#loading.hide{
-  opacity:0;
-  pointer-events:none;
-}
-
-.loader{
-  width:70px;
-  height:70px;
-  border:3px solid rgba(255,255,255,0.2);
-  border-top:3px solid #7aa2ff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg);}
-}
-
-/* ========== CANVAS ========== */
 canvas{
-  position:fixed;
-  inset:0;
-  z-index:-3;
-}
-
-/* ========== HEADER ========== */
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:60px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 20px;
-  background:rgba(10,15,30,0.6);
-  backdrop-filter: blur(12px);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-  transition:0.35s;
-  z-index:100;
-}
-
-header.hide{
-  transform:translateY(-100%);
-}
-
-.logo{
-  background:linear-gradient(90deg,#7aa2ff,#c07bff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  letter-spacing:3px;
-  font-weight:600;
-}
-
-/* ========== HAMBURGER ========== */
-.hamburger{
-  width:40px;
-  height:28px;
-  position:relative;
-  cursor:pointer;
-}
-
-.hamburger span{
-  position:absolute;
-  width:100%;
-  height:3px;
-  background:#fff;
-  transition:0.3s;
-  border-radius:10px;
-}
-
-.hamburger span:nth-child(1){top:0;}
-.hamburger span:nth-child(2){top:12px;}
-.hamburger span:nth-child(3){bottom:0;}
-
-.hamburger.active span:nth-child(1){
-  transform:rotate(45deg);
-  top:12px;
-}
-
-.hamburger.active span:nth-child(2){
-  opacity:0;
-}
-
-.hamburger.active span:nth-child(3){
-  transform:rotate(-45deg);
-  bottom:12px;
-}
-
-/* ========== MENU ========== */
-nav{
-  position:fixed;
-  top:0;
-  right:-300px;
-  width:260px;
-  height:100vh;
-  background:rgba(12,18,40,0.92);
-  backdrop-filter: blur(14px);
-  padding:80px 20px;
-  transition:0.4s;
-  z-index:90;
-}
-
-nav.active{ right:0; }
-
-nav a{
-  display:block;
-  color:#fff;
-  text-decoration:none;
-  margin:20px 0;
-  opacity:0.8;
-}
-
-/* ========== HERO ========== */
-.hero{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-}
-
-.hero h1{
-  font-size:60px;
-  letter-spacing:4px;
-}
-
-/* floating button */
-.btn{
-  margin-top:20px;
-  padding:12px 26px;
-  border:none;
-  border-radius:999px;
-  background:linear-gradient(135deg,#4f7cff,#b14cff);
-  color:#fff;
-  cursor:pointer;
-  transition:0.3s;
-  animation:float 3s ease-in-out infinite;
-}
-
-.btn:hover{
-  transform:scale(1.05);
-}
-
-@keyframes float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-6px);}
-}
-
-/* ========== SECTIONS ========== */
-section{
-  max-width:900px;
-  margin:auto;
-  padding:90px 20px;
-}
-
-.card{
-  background:rgba(255,255,255,0.05);
-  padding:18px;
-  border-radius:14px;
-  margin-top:15px;
-}
-
-/* ========== USAGE ========== */
-#usageText{
-  max-height:60px;
-  overflow:hidden;
-  transition:0.4s;
-}
-
-#usageText.open{
-  max-height:300px;
-}
-
-/* ========== DOWNLOAD ========== */
-.downloadBox{
-  text-align:center;
-  margin-top:20px;
-}
-
-/* ========== OVERLAY ========== */
-#overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
-  z-index:80;
-}
-
-#overlay.active{
-  opacity:1;
-  pointer-events:auto;
+    position:fixed;
+    inset:0;
 }
 </style>
 </head>
-
 <body>
 
-<!-- LOADING -->
-<div id="loading">
-  <div class="loader"></div>
-</div>
-<script>
-/* ========== LOADING ========== */
-window.addEventListener("load",()=>{
-  setTimeout(()=>{
-    document.getElementById("loading").classList.add("hide");
-  },1);
-});
+<canvas id="bg"></canvas>
 
-/* ========== STAR CANVAS ========== */
-const canvas=document.getElementById("bg");
-const ctx=canvas.getContext("2d");
+<script>
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
 
 function resize(){
-  canvas.width=innerWidth;
-  canvas.height=innerHeight;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
 }
 resize();
-window.addEventListener("resize",resize);
 
-let stars=[];
-for(let i=0;i<90;i++){
-  stars.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    r:Math.random()*1.5,
-    vx:(Math.random()-0.5)*0.25,
-    vy:(Math.random()-0.5)*0.25
-  });
+window.addEventListener("resize", resize);
+
+const stars = [];
+
+for(let i=0;i<120;i++){
+    stars.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        r:Math.random()*2,
+        vx:(Math.random()-0.5)*0.3,
+        vy:(Math.random()-0.5)*0.3
+    });
 }
 
-let scrollY=0;
-window.addEventListener("scroll",()=>scrollY=window.scrollY);
+function animate(){
 
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  for(let s of stars){
-    s.x+=s.vx;
-    s.y+=s.vy;
+    for(const star of stars){
 
-    if(s.x<0)s.x=canvas.width;
-    if(s.x>canvas.width)s.x=0;
-    if(s.y<0)s.y=canvas.height;
-    if(s.y>canvas.height)s.y=0;
+        star.x += star.vx;
+        star.y += star.vy;
 
-    ctx.fillStyle="#fff";
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    ctx.fill();
-  }
+        if(star.x < 0) star.x = canvas.width;
+        if(star.x > canvas.width) star.x = 0;
+        if(star.y < 0) star.y = canvas.height;
+        if(star.y > canvas.height) star.y = 0;
 
-  for(let i=0;i<stars.length;i++){
-    for(let j=i+1;j<stars.length;j++){
-      let dx=stars[i].x-stars[j].x;
-      let dy=stars[i].y-stars[j].y;
-      let dist=Math.sqrt(dx*dx+dy*dy);
-
-      if(dist<130){
-        let alpha=(1-dist/130)*0.3;
-        ctx.strokeStyle=`rgba(160,180,255,${alpha})`;
+        ctx.fillStyle = "#ffffff";
         ctx.beginPath();
-        ctx.moveTo(stars[i].x,stars[i].y);
-        ctx.lineTo(stars[j].x,stars[j].y);
-        ctx.stroke();
-      }
+        ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
+        ctx.fill();
     }
-  }
 
-  requestAnimationFrame(draw);
+    for(let i=0;i<stars.length;i++){
+        for(let j=i+1;j<stars.length;j++){
+
+            const dx = stars[i].x - stars[j].x;
+            const dy = stars[i].y - stars[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            if(dist < 130){
+
+                ctx.strokeStyle =
+                    `rgba(150,180,255,${(1-dist/130)*0.35})`;
+
+                ctx.beginPath();
+                ctx.moveTo(stars[i].x,stars[i].y);
+                ctx.lineTo(stars[j].x,stars[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    requestAnimationFrame(animate);
 }
-draw();
 
-/* ========== MENU ========== */
-const hamburger=document.getElementById("hamburger");
-const nav=document.getElementById("nav");
-const overlay=document.getElementById("overlay");
-
-function closeMenu(){
-  hamburger.classList.remove("active");
-  nav.classList.remove("active");
-  overlay.classList.remove("active");
-}
-
-hamburger.onclick=()=>{
-  hamburger.classList.toggle("active");
-  nav.classList.toggle("active");
-  overlay.classList.toggle("active");
-};
-
-overlay.onclick=closeMenu;
-
-/* close on link click */
-document.querySelectorAll("nav a").forEach(a=>{
-  a.onclick=closeMenu;
-});
-
-/* ========== USAGE ========== */
-const usageText=document.getElementById("usageText");
-const toggleBtn=document.getElementById("toggleBtn");
-
-toggleBtn.onclick=()=>{
-  usageText.classList.toggle("open");
-  toggleBtn.textContent=
-    usageText.classList.contains("open")?"閉じる":"全部見る";
-};
-
-/* ========== HEADER HIDE ========== */
-let lastScroll=0;
-window.addEventListener("scroll",()=>{
-  const header=document.getElementById("header");
-  if(window.scrollY>lastScroll){
-    header.classList.add("hide");
-  }else{
-    header.classList.remove("hide");
-  }
-  lastScroll=window.scrollY;
-});
+animate();
 </script>
 
 </body>
