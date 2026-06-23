@@ -284,47 +284,35 @@ function drawConnections(){
 
         for(let j=i+1;j<stars.length;j++){
 
-            const dx =
-                stars[i].x -
-                stars[j].x;
+            const dx = stars[i].x - stars[j].x;
+            const dy = stars[i].y - stars[j].y;
 
-            const dy =
-                stars[i].y -
-                stars[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
 
-            const dist =
-                Math.sqrt(
-                    dx*dx + dy*dy
-                );
-
-            if(dist < 80){
+            if(dist < 100){
 
                 const alpha =
-                    (1-dist/80)*0.15;
+                    (1 - dist / 80) * 0.6;
 
                 ctx.strokeStyle =
-                    `rgba(130,170,255,${alpha})`;
+                    `rgba(180,220,255,${alpha})`;
 
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.5;
+
+                ctx.shadowBlur = 8;
+                ctx.shadowColor =
+                    "rgba(180,220,255,0.8)";
 
                 ctx.beginPath();
-
-                ctx.moveTo(
-                    stars[i].x,
-                    stars[i].y
-                );
-
-                ctx.lineTo(
-                    stars[j].x,
-                    stars[j].y
-                );
-
+                ctx.moveTo(stars[i].x, stars[i].y);
+                ctx.lineTo(stars[j].x, stars[j].y);
                 ctx.stroke();
             }
         }
     }
-}
 
+    ctx.shadowBlur = 0;
+}
 /* =========================
    星描画
 ========================= */
