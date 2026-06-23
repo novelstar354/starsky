@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STar Background</title>
+<title>Deep Space Background</title>
 
 <style>
 *{
@@ -12,14 +12,20 @@
     box-sizing:border-box;
 }
 
-body{
-    background:radial-gradient(circle at top,#0a0f1f,#05070f);
+html,body{
+    width:100%;
+    height:100%;
     overflow:hidden;
 }
 
+body{
+    background:#02030a;
+}
+
 canvas{
-    position:fixed;
-    inset:0;
+    display:block;
+    width:100%;
+    height:100%;
 }
 </style>
 </head>
@@ -31,67 +37,352 @@ canvas{
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
+let stars = [];
+let milkyWay = [];
+
 function resize(){
+
     canvas.width = innerWidth;
     canvas.height = innerHeight;
+
+    createMilkyWay();
 }
-resize();
 
 window.addEventListener("resize", resize);
+resize();
 
-const stars = [];
+/* =========================
+   星
+========================= */
 
-for(let i=0;i<120;i++){
+const STAR_COUNT = 120;
+
+for(let i=0;i<STAR_COUNT;i++){
+
     stars.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        r:Math.random()*2,
-        vx:(Math.random()-0.5)*0.3,
-        vy:(Math.random()-0.5)*0.3
+        x:Math.random()*innerWidth,
+        y:Math.random()*innerHeight,
+        r:Math.random()*2+0.5,
+        vx:(Math.random()-0.5)*0.2,
+        vy:(Math.random()-0.5)*0.2,
+        twinkle:Math.random()*Math.PI*2
     });
+
 }
 
-function animate(){
+/* =========================
+   天の川
+========================= */
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+function createMilkyWay(){
 
-    for(const star of stars){
+    milkyWay = [];
 
-        star.x += star.vx;
-        star.y += star.vy;
+    for(let i=0;i<700;i++){
 
-        if(star.x < 0) star.x = canvas.width;
-        if(star.x > canvas.width) star.x = 0;
-        if(star.y < 0) star.y = canvas.height;
-        if(star.y > canvas.height) star.y = 0;
+        milkyWay.push({
 
-        ctx.fillStyle = "#ffffff";
+            x:
+                canvas.width*0.5 +
+                (Math.random()-0.5)*400,
+
+            y:
+                Math.random()*canvas.height,
+
+            r:
+                Math.random()*1.5
+
+        });
+
+    }
+}
+
+/* =========================
+   深宇宙背景
+========================= */
+
+function drawBackground(){
+
+    const g =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            canvas.height
+        );
+
+    g.addColorStop(0,"#101b3f");
+    g.addColorStop(0.25,"#09142d");
+    g.addColorStop(0.55,"#050b18");
+    g.addColorStop(0.8,"#03050f");
+    g.addColorStop(1,"#010208");
+
+    ctx.fillStyle = g;
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    const glow =
+        ctx.createRadialGradient(
+            canvas.width*0.5,
+            canvas.height*0.15,
+            0,
+            canvas.width*0.5,
+            canvas.height*0.15,
+            canvas.width*0.7
+        );
+
+    glow.addColorStop(
+        0,
+        "rgba(80,120,255,0.10)"
+    );
+
+    glow.addColorStop(
+        1,
+        "rgba(0,0,0,0)"
+    );
+
+    ctx.fillStyle = glow;
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+}
+
+/* =========================
+   オーロラ
+========================= */
+
+function drawAurora(){
+
+    const t = Date.now()*0.00015;
+
+    for(let i=0;i<4;i++){
+
+        const y =
+            canvas.height*0.15 +
+            i*70 +
+            Math.sin(t+i)*25;
+
+        const aurora =
+            ctx.createLinearGradient(
+                0,
+                y,
+                canvas.width,
+                y+250
+            );
+
+        aurora.addColorStop(
+            0,
+            "rgba(0,255,180,0)"
+        );
+
+        aurora.addColorStop(
+            0.3,
+            "rgba(0,255,180,0.05)"
+        );
+
+        aurora.addColorStop(
+            0.6,
+            "rgba(120,100,255,0.05)"
+        );
+
+        aurora.addColorStop(
+            1,
+            "rgba(0,0,0,0)"
+        );
+
+        ctx.fillStyle = aurora;
+
         ctx.beginPath();
-        ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
+        ctx.moveTo(0,y);
+
+        for(let x=0;x<=canvas.width;x+=30){
+
+            ctx.lineTo(
+                x,
+                y+
+                Math.sin(
+                    x*0.004+t+i
+                )*35
+            );
+        }
+
+        ctx.lineTo(
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.lineTo(
+            0,
+            canvas.height
+        );
+
+        ctx.closePath();
         ctx.fill();
     }
+}
+
+/* =========================
+   天の川描画
+========================= */
+
+function drawMilkyWay(){
+
+    for(const s of milkyWay){
+
+        ctx.fillStyle =
+            "rgba(255,255,255,0.12)";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            s.x,
+            s.y,
+            s.r,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+    }
+}
+
+/* =========================
+   星更新
+========================= */
+
+function updateStars(){
+
+    for(const s of stars){
+
+        s.x += s.vx;
+        s.y += s.vy;
+
+        if(s.x < 0) s.x = canvas.width;
+        if(s.x > canvas.width) s.x = 0;
+
+        if(s.y < 0) s.y = canvas.height;
+        if(s.y > canvas.height) s.y = 0;
+
+        s.twinkle += 0.03;
+    }
+}
+
+/* =========================
+   星座線
+========================= */
+
+function drawConnections(){
 
     for(let i=0;i<stars.length;i++){
+
         for(let j=i+1;j<stars.length;j++){
 
-            const dx = stars[i].x - stars[j].x;
-            const dy = stars[i].y - stars[j].y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
+            const dx =
+                stars[i].x -
+                stars[j].x;
 
-            if(dist < 130){
+            const dy =
+                stars[i].y -
+                stars[j].y;
+
+            const dist =
+                Math.sqrt(
+                    dx*dx + dy*dy
+                );
+
+            if(dist < 80){
+
+                const alpha =
+                    (1-dist/80)*0.15;
 
                 ctx.strokeStyle =
-                    `rgba(150,180,255,${(1-dist/130)*0.35})`;
+                    `rgba(130,170,255,${alpha})`;
+
+                ctx.lineWidth = 1;
 
                 ctx.beginPath();
-                ctx.moveTo(stars[i].x,stars[i].y);
-                ctx.lineTo(stars[j].x,stars[j].y);
+
+                ctx.moveTo(
+                    stars[i].x,
+                    stars[i].y
+                );
+
+                ctx.lineTo(
+                    stars[j].x,
+                    stars[j].y
+                );
+
                 ctx.stroke();
             }
         }
     }
+}
 
-    requestAnimationFrame(animate);
+/* =========================
+   星描画
+========================= */
+
+function drawStars(){
+
+    for(const s of stars){
+
+        const glow =
+            8 +
+            Math.sin(
+                s.twinkle
+            )*4;
+
+        ctx.shadowBlur = glow;
+        ctx.shadowColor =
+            "#ffffff";
+
+        ctx.fillStyle =
+            "#ffffff";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            s.x,
+            s.y,
+            s.r,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+    }
+
+    ctx.shadowBlur = 0;
+}
+
+/* =========================
+   アニメーション
+========================= */
+
+function animate(){
+
+    drawBackground();
+
+    drawAurora();
+
+    drawMilkyWay();
+
+    updateStars();
+
+    drawConnections();
+
+    drawStars();
+
+    requestAnimationFrame(
+        animate
+    );
 }
 
 animate();
